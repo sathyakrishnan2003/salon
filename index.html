@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beauty Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: linear-gradient(to bottom, #7e4a4a, #e0a1a1); color: #333; scroll-behavior: smooth; }
+    header { background: #8d5f59; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 15px 40px; position: fixed; width: 100%; top: 0; z-index: 1000; }
+    .logo { display: flex; align-items: center; font-weight: bold; font-size: 22px; gap: 10px; }
+    .logo img { width: 40px; height: 40px; }
+    nav ul { list-style: none; display: flex; gap: 20px; }
+    nav ul li a { color: #f1c7bf; text-decoration: none; font-weight: 500; cursor: pointer; }
+    nav ul li a:hover { text-decoration: underline; }
+    .auth-buttons button { background: #f1c7bf; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .auth-buttons button:hover { background: #e9b8ae; }
+
+    section { display: none; padding: 120px 60px 60px; min-height: 100vh; }
+    #home { background: linear-gradient(135deg, #8d5f59, #a37a77); color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap; padding: 120px 80px 60px; }
+    .home-text { flex: 1; min-width: 300px; }
+    .home-text h1 { font-size: 2.8rem; margin-bottom: 20px; }
+    .home-text p { margin-bottom: 30px; max-width: 400px; }
+    .home-text button { background: #f1c7bf; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .home-text button:hover { background: #e9b8ae; }
+    .home-image { flex: 1; min-width: 250px; display: flex; justify-content: flex-end; }
+    .home-image img { width: 300px; max-width: 100%; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    @media(max-width: 768px) {
+      #home { flex-direction: column; text-align: center; }
+      .home-image { justify-content: center; margin-top: 20px; }
+    }
+
+    #about {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      align-items: center;
+      gap: 40px;
+      background: linear-gradient(180deg, #803c3c 0%, rgba(128,60,60,0.84) 34.13%, rgba(128,60,60,0.68) 100%);
+      color: #fff;
+      padding: 60px 10%;
+    }
+    #about img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 20px;
+      justify-self: left;
+    }
+
+    /* Services Section */
+    #services {
+      padding: 80px 20px 40px;
+      text-align: center;
+      color: #fff;
+    }
+    #services h2 {
+      font-size: 2.4em;
+      margin-bottom: 30px;
+      color: #ffffff;
+    }
+    .service-list {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .service-card {
+      background-color: #dca8a8;
+      color: #333;
+      padding: 20px;
+      border-radius: 15px;
+      width: 250px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+    .service-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .service-card h3 {
+      font-size: 1.2em;
+      margin-bottom: 8px;
+      color: #2e2e2e;
+    }
+    .service-card p {
+      margin: 5px 0;
+      font-size: 0.95em;
+    }
+    .service-card button {
+      margin-top: 15px;
+      background-color: #9c5c5c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .service-card button:hover {
+      background-color: #7c3e3e;
+    }
+
+    /* Contact */
+    #contact {
+      background: linear-gradient(180deg, #803C3C 0%, rgba(128,60,60,0.68) 93.75%);
+      opacity: 0.95;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #000;
+    }
+    .contact-box {
+      background: rgba(217,217,217,0.47);
+      padding: 40px;
+      border-radius: 12px;
+      width: 400px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 18px;
+    }
+    .contact-item span { margin-left: 15px; }
+
+    /* Auth */
+    .auth-body {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: url("images/hero.jpg") center/cover no-repeat;
+    }
+    .auth-container {
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 12px;
+      width: 350px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #8d5f59;
+    }
+    .auth-container label {
+      color: #8d5f59;
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    /* Customer Dashboard */
+    #dashboard {
+      display: none;
+      padding-top: 70px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    #dashboardSidebar {
+      width: 250px;
+      background: #8d5f59;
+      color: white;
+      padding: 30px 20px;
+      position: fixed;
+      top: 70px;
+      bottom: 0;
+      border-radius: 0 20px 20px 0;
+    }
+    #dashboardSidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    #dashboardSidebar ul li {
+      margin: 20px 0;
+    }
+    #dashboardSidebar ul li a,
+    #dashboardSidebar ul li button {
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    #dashboardSidebar ul li a:hover,
+    #dashboardSidebar ul li button:hover {
+      color: #f1c7bf;
+    }
+    #dashboardContent {
+      margin-left: 270px;
+      padding: 40px;
+    }
+    .dashboard-section {
+      display: none;
+    }
+    .dashboard-section.active {
+      display: block;
+    }
+
+    /* Admin Panel */
+    #adminDashboard {
+      display: none;
+      background: #fef6f5;
+      color: #333;
+    }
+    #adminSidebar {
+      width: 250px;
+      background: #f1d6d6;
+      color: #803c3c;
+      padding: 30px 20px;
+      border-radius: 0 20px 20px 0;
+    }
+    #adminSidebar h2 {
+      margin-bottom: 30px;
+    }
+    #adminSidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    #adminSidebar ul li {
+      margin: 20px 0;
+    }
+    #adminSidebar ul li a,
+    #adminSidebar ul li button {
+      color: #803c3c;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    #adminSidebar ul li a:hover,
+    #adminSidebar ul li button:hover {
+      color: #5c2c2c;
+    }
+    #adminContent {
+      flex: 1;
+      padding: 40px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .admin-section {
+      display: none;
+    }
+    .admin-section h2 {
+      margin-bottom: 20px;
+      color: #803c3c;
+    }
+    #serviceList li, #userList li {
+      background: #f9eaea;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #serviceList li button, #userList li button {
+      background: #803c3c;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    #serviceList li button:hover, #userList li button:hover {
+      background: #5c2c2c;
+    }
+    #serviceForm input, #userForm input, #serviceForm button, #userForm button {
+      margin: 5px 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    #serviceForm button, #userForm button {
+      background: #803c3c;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    #serviceForm button:hover, #userForm button:hover {
+      background: #5c2c2c;
+    }
+
+    .small-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      background: #803c3c;
+      color: #fff;
+      cursor: pointer;
+    }
+    .small-btn:hover {
+      background: #5c2c2c;
+    }
+
+    /* Notification / Toast style */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #803c3c;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0.9;
+      z-index: 2000;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo"><img src="../images/logo.jpg" alt="Logo" />Beauty Center</div>
+    <nav>
+      <ul>
+        <li><a onclick="showPage('home')">Home</a></li>
+        <li><a onclick="showPage('about')">About</a></li>
+        <li><a onclick="showPage('services')">Services</a></li>
+        <li><a onclick="showPage('contact')">Contact</a></li>
+        <li><a onclick="showPage('adminLogin')">Admin</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <button onclick="showPage('login')">Login</button>
+      <button onclick="showPage('register')">Register</button>
+    </div>
+  </header>
+
+  <!-- Home -->
+  <section id="home" style="display: block;">
+    <div class="home-text">
+      <h1>Look Awesome & Save Some</h1>
+      <p>Step into a world of personalized services that enhance your beauty and well-being.</p>
+      <button onclick="showPage('services')">Explore Services</button>
+    </div>
+    <div class="home-image"><img src="../images/home.jpg" alt="Beauty Center" /></div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div>
+      <h1>About</h1>
+      <p>At our salon, we provide exceptional beauty and wellness services in a warm environment...</p>
+    </div>
+    <div><img src="../images/about.jpg" alt="About" /></div>
+  </section>
+
+  <!-- Services Page -->
+  <section id="services">
+    <h2>Our Services</h2>
+    <div id="servicesList" class="service-list"></div>
+  </section>
+  
+
+  <!-- Contact -->
+  <section id="contact">
+    <h1>Contact Us</h1>
+    <div class="contact-box">
+      <div class="contact-item"><span>📞</span><span>+123 456 7890</span></div>
+      <div class="contact-item"><span>📍</span><span>123 Koramangala, Bangalore</span></div>
+      <div class="contact-item"><span>✉️</span><span>Beautysalon123@gmail.com</span></div>
+    </div>
+  </section>
+
+  <!-- Login -->
+  <section id="login" class="auth-body">
+    <div class="auth-container">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>Email</label><input type="email" id="loginEmail" required />
+        <label>Password</label><input type="password" id="loginPassword" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Register -->
+  <section id="register" class="auth-body">
+    <div class="auth-container">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <label>Name</label><input type="text" id="regName" required />
+        <label>Email</label><input type="email" id="regEmail" required />
+        <label>Password</label><input type="password" id="regPassword" required />
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Customer Dashboard -->
+  <section id="dashboard">
+    <div style="display: flex;">
+      <div id="dashboardSidebar">
+        <h2>Dashboard</h2>
+        <ul>
+          <li><a onclick="showCustomerSection('custOverview')">Overview</a></li>
+          <li><a onclick="showCustomerSection('custServices')">Services</a></li>
+          <li><a onclick="showCustomerSection('custAppointments')">My Appointments</a></li>
+          <li><button onclick="logout()" class="small-btn">Logout</button></li>
+        </ul>
+      </div>
+      <div id="dashboardContent">
+        <div id="custOverview" class="dashboard-section active">
+          <h2>Welcome, <span id="customerName"></span> 👋</h2>
+          <p>Email: <span id="dashboardEmail"></span></p>
+          <h3>Notifications</h3>
+          <div id="customerNotifications"></div>
+        </div>
+        <div id="custServices" class="dashboard-section">
+          <h2>Available Services</h2>
+          <div id="dashboardServices" class="service-list"></div>
+        </div>
+        <div id="custAppointments" class="dashboard-section">
+          <h2>My Appointments</h2>
+          <ul id="appointmentsList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Login -->
+  <section id="adminLogin" class="auth-body">
+    <div class="auth-container">
+      <h2>Admin Login</h2>
+      <form id="adminLoginForm">
+        <label>Email</label><input type="email" id="adminEmail" required />
+        <label>Password</label><input type="password" id="adminPassword" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Admin Dashboard -->
+  <section id="adminDashboard">
+    <div style="display: flex;">
+      <div id="adminSidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+          <li><a onclick="showAdminSection('adminOverview')">Overview</a></li>
+          <li><a onclick="showAdminSection('manageUsers')">Manage Users</a></li>
+          <li><a onclick="showAdminSection('manageServices')">Manage Services</a></li>
+          <li><a onclick="showAdminSection('adminAppointments')">Appointments</a></li>
+          <li><button onclick="adminLogout()" class="small-btn">Logout</button></li>
+        </ul>
+      </div>
+      <div id="adminContent">
+        <div id="adminOverview" class="admin-section" style="display: block;">
+          <h2>Welcome Admin 👋</h2>
+          <h3>Notifications</h3>
+          <div id="adminNotifications"></div>
+        </div>
+        <div id="manageUsers" class="admin-section">
+          <h2>Manage Users</h2>
+          <form id="userForm">
+            <input type="hidden" id="userId" />
+            <input type="text" id="userName" placeholder="Name" required />
+            <input type="email" id="userEmail" placeholder="Email" required />
+            <button id="submitUserBtn">Add User</button>
+          </form>
+          <ul id="userList"></ul>
+        </div>
+        <div id="manageServices" class="admin-section">
+          <h2>Manage Services</h2>
+          <form id="serviceForm">
+            <input type="hidden" id="serviceId" />
+            <input type="text" id="serviceName" placeholder="Service Name" required />
+            <input type="number" id="servicePrice" placeholder="Price" required />
+            <input type="text" id="serviceDuration" placeholder="Duration" required />
+            <button id="submitServiceBtn">Add Service</button>
+          </form>
+          <ul id="serviceList"></ul>
+        </div>
+        <div id="adminAppointments" class="admin-section">
+          <h2>Appointments</h2>
+          <ul id="adminAppointmentsList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Navigation
+    function showPage(pageId) {
+      document.querySelectorAll("section").forEach(sec => sec.style.display = "none");
+      const el = document.getElementById(pageId);
+      if (el) el.style.display = "block";
+
+      if (pageId === 'services') {
+        renderMainServices();
+      }
+    }
+    function showAdminSection(id) {
+      document.querySelectorAll("#adminContent .admin-section").forEach(sec => sec.style.display = "none");
+      const el = document.getElementById(id);
+      if (el) el.style.display = "block";
+    }
+    function showCustomerSection(id) {
+      document.querySelectorAll(".dashboard-section").forEach(sec => sec.classList.remove("active"));
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active");
+    }
+    function adminLogout() { showPage("home"); }
+    function logout() { localStorage.removeItem("currentUser"); showPage("home"); }
+
+    // LocalStorage helpers
+    function getUsers() { return JSON.parse(localStorage.getItem("users") || "[]"); }
+    function saveUsers(u) { localStorage.setItem("users", JSON.stringify(u)); }
+    function getServices() { return JSON.parse(localStorage.getItem("services") || "[]"); }
+    function saveServices(s) { localStorage.setItem("services", JSON.stringify(s)); }
+    function getAppointments() { return JSON.parse(localStorage.getItem("appointments") || "[]"); }
+    function saveAppointments(a) { localStorage.setItem("appointments", JSON.stringify(a)); }
+
+    // Notifications
+    function getAllNotifications() {
+      return JSON.parse(localStorage.getItem("notifications") || "[]");
+    }
+    function saveAllNotifications(list) {
+      localStorage.setItem("notifications", JSON.stringify(list));
+    }
+    function addNotification(to, message) {
+      const list = getAllNotifications();
+      list.push({ to, message, timestamp: Date.now() });
+      saveAllNotifications(list);
+    }
+    function getNotificationsFor(to) {
+      return getAllNotifications().filter(n => n.to === to);
+    }
+
+    function renderCustomerNotifications() {
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user) return;
+      const container = document.getElementById("customerNotifications");
+      const notifs = getNotificationsFor(user.email);
+      if (!container) return;
+      if (notifs.length === 0) {
+        container.innerHTML = "<p>No notifications.</p>";
+      } else {
+        container.innerHTML = "<ul>" +
+          notifs.map(n => `<li>${n.message}</li>`).join("") +
+          "</ul>";
+      }
+    }
+    function renderAdminNotifications() {
+      const container = document.getElementById("adminNotifications");
+      const notifs = getNotificationsFor("admin");
+      if (!container) return;
+      if (notifs.length === 0) {
+        container.innerHTML = "<p>No notifications.</p>";
+      } else {
+        container.innerHTML = "<ul>" +
+          notifs.map(n => `<li>${n.message}</li>`).join("") +
+          "</ul>";
+      }
+    }
+
+    // Toast / popup
+    function showToast(msg) {
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => {
+        t.remove();
+      }, 3000);
+    }
+
+    // Initialize
+    let users = getUsers();
+    let services = getServices();
+    let appointments = getAppointments();
+
+    if (services.length === 0) {
+      services = [
+        { name: "Nail Art", price: 2500, duration: "1hr" },
+        { name: "Facial", price: 2000, duration: "30mins" },
+        { name: "Hair Cut", price: 590, duration: "45mins" }
+      ];
+      saveServices(services);
+    }
+
+    // Admin: Users
+    function updateUserList() {
+      const list = document.getElementById("userList");
+      list.innerHTML = "";
+      users.forEach((u, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${u.name} (${u.email})</span>
+          <div>
+            <button class="small-btn" onclick="editUser(${i})">Edit</button>
+            <button class="small-btn" onclick="removeUser(${i})">Remove</button>
+          </div>`;
+        list.appendChild(li);
+      });
+      saveUsers(users);
+    }
+    document.getElementById("userForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const id = document.getElementById("userId").value;
+      const name = document.getElementById("userName").value.trim();
+      const email = document.getElementById("userEmail").value.trim();
+      if (!name || !email) return;
+      if (id !== "") {
+        users[id] = { name, email, password: users[id]?.password || "" };
+      } else {
+        users.push({ name, email, password: "1234" });
+      }
+      updateUserList();
+      this.reset();
+      document.getElementById("userId").value = "";
+    });
+    function editUser(i) {
+      document.getElementById("userId").value = i;
+      document.getElementById("userName").value = users[i].name;
+      document.getElementById("userEmail").value = users[i].email;
+    }
+    function removeUser(i) {
+      if (confirm("Remove user?")) {
+        users.splice(i, 1);
+        updateUserList();
+        showToast("User removed");
+      }
+    }
+
+    // Admin: Services
+    function updateServiceList() {
+      const list = document.getElementById("serviceList");
+      list.innerHTML = "";
+      services.forEach((s, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${s.name} - Rs ${s.price} - ${s.duration}</span>
+          <div>
+            <button class="small-btn" onclick="editService(${i})">Edit</button>
+            <button class="small-btn" onclick="removeService(${i})">Remove</button>
+          </div>`;
+        list.appendChild(li);
+      });
+      saveServices(services);
+      renderServicesForDashboard();
+    }
+    document.getElementById("serviceForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const id = document.getElementById("serviceId").value;
+      const name = document.getElementById("serviceName").value.trim();
+      const price = document.getElementById("servicePrice").value.trim();
+      const duration = document.getElementById("serviceDuration").value.trim();
+      if (!name || !price || !duration) return;
+      if (id !== "") {
+        services[id] = { name, price, duration };
+      } else {
+        services.push({ name, price, duration });
+      }
+      updateServiceList();
+      this.reset();
+      document.getElementById("serviceId").value = "";
+      renderMainServices();
+      showToast("Service list updated");
+    });
+    function editService(i) {
+      document.getElementById("serviceId").value = i;
+      document.getElementById("serviceName").value = services[i].name;
+      document.getElementById("servicePrice").value = services[i].price;
+      document.getElementById("serviceDuration").value = services[i].duration;
+    }
+    function removeService(i) {
+      if (confirm("Remove service?")) {
+        const removed = services.splice(i, 1);
+        updateServiceList();
+        renderMainServices();
+        showToast("Service removed: " + (removed[0]?.name || ""));
+      }
+    }
+
+    // Customer: Register / Login
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value.trim();
+      if (!name || !email || !password) return alert("Fill all fields!");
+      if (users.some(u => u.email === email)) return alert("Email exists!");
+      users.push({ name, email, password });
+      saveUsers(users);
+      showToast("Registered! Please login.");
+      showPage("login");
+    });
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const u = users.find(u => u.email === email && u.password === password);
+      if (!u) return alert("Invalid credentials");
+      localStorage.setItem("currentUser", JSON.stringify(u));
+      startCustomerDashboard(u);
+    });
+    function startCustomerDashboard(u) {
+      showPage("dashboard");
+      document.getElementById("customerName").textContent = u.name;
+      document.getElementById("dashboardEmail").textContent = u.email;
+      renderServicesForDashboard();
+      renderCustomerAppointments();
+      renderCustomerNotifications();
+    }
+
+    // Customer: Services & Booking
+    function renderServicesForDashboard() {
+      const container = document.getElementById("dashboardServices");
+      container.innerHTML = "";
+      services.forEach((s, i) => {
+        const card = document.createElement("div");
+        card.className = "service-card";
+        card.innerHTML = `<h3>${s.name}</h3>
+          <p>Price: Rs ${s.price}</p>
+          <p>Duration: ${s.duration}</p>
+          <button onclick="customerBookService(${i})">Book</button>`;
+        container.appendChild(card);
+      });
+    }
+    function customerBookService(serviceIndex) {
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user) {
+        alert("Please login first.");
+        showPage("login");
+        return;
+      }
+      const svc = services[serviceIndex];
+      let when = prompt("Enter appointment date/time (YYYY-MM-DD HH:MM). Leave blank for ASAP:");
+      if (when === null) return;
+      if (!when.trim()) when = "ASAP";
+      const appt = {
+        id: Date.now(),
+        userEmail: user.email,
+        userName: user.name,
+        serviceName: svc.name,
+        price: svc.price,
+        duration: svc.duration,
+        when
+      };
+      appointments.push(appt);
+      saveAppointments(appointments);
+      showToast("Booked: " + svc.name);
+      renderCustomerAppointments();
+      loadAdminAppointments();
+    }
+
+    function renderCustomerAppointments() {
+      const list = document.getElementById("appointmentsList");
+      list.innerHTML = "";
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user) return;
+      appointments.filter(a => a.userEmail === user.email).forEach((a, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${a.serviceName} — ${a.when} — Rs ${a.price} — ${a.duration}
+          <button class="small-btn" onclick="cancelCustomerAppointment(${i})">Cancel</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function cancelCustomerAppointment(index) {
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user) {
+        showToast("No user logged in");
+        return;
+      }
+      const userAppts = appointments.filter(a => a.userEmail === user.email);
+      const appt = userAppts[index];
+      if (!appt) {
+        showToast("Appointment not found");
+        return;
+      }
+      // Remove by matching ID
+      appointments = appointments.filter(a => a.id !== appt.id);
+      saveAppointments(appointments);
+      // Notify admin
+      addNotification("admin", `${user.name} cancelled "${appt.serviceName}" on ${appt.when}`);
+      showToast("Appointment canceled: " + appt.serviceName);
+      renderCustomerAppointments();
+      loadAdminAppointments();
+      renderAdminNotifications();
+    }
+
+    // Admin: Appointments + cancel
+    function loadAdminAppointments() {
+      const list = document.getElementById("adminAppointmentsList");
+      list.innerHTML = "";
+      appointments.forEach((a, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${a.serviceName}</strong> by ${a.userName} (${a.userEmail}) — Rs ${a.price} — ${a.duration} — ${a.when}
+          <button class="small-btn" onclick="adminCancelAppointment(${i})">Cancel</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function adminCancelAppointment(index) {
+      if (index < 0 || index >= appointments.length) return;
+      const appt = appointments[index];
+      if (!appt) return;
+      if (!confirm("Are you sure you want to cancel this appointment?")) {
+        return;
+      }
+      // Notify user
+      addNotification(appt.userEmail, `Admin cancelled your appointment for "${appt.serviceName}" on ${appt.when}`);
+      // Remove it
+      appointments.splice(index, 1);
+      saveAppointments(appointments);
+      showToast("Appointment canceled by admin: " + appt.serviceName);
+      loadAdminAppointments();
+      renderCustomerAppointments();
+      renderCustomerNotifications();
+    }
+
+    // Admin login
+    document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("adminEmail").value.trim();
+      const password = document.getElementById("adminPassword").value.trim();
+      if (email === "admin@beauty.com" && password === "admin123") {
+        showPage("adminDashboard");
+        updateUserList();
+        updateServiceList();
+        loadAdminAppointments();
+        renderAdminNotifications();
+      } else {
+        alert("Invalid admin credentials");
+      }
+    });
+
+    // Render services page
+    function renderMainServices() {
+      const list = document.getElementById("servicesList");
+      list.innerHTML = "";
+      services.forEach((s, i) => {
+        const card = document.createElement("div");
+        card.className = "service-card";
+        const imgName = s.name.toLowerCase().replace(/\s+/g, '') + ".jpg";
+        card.innerHTML = `
+          <img src="../images/${imgName}" alt="${s.name}" 
+               onerror="this.onerror = null; this.src = '../images/default.jpg';" />
+          <h3>${s.name}</h3>
+          <p>Duration: ${s.duration}</p>
+          <p>Price: Rs ${s.price}</p>
+          <button onclick="customerBookService(${i})">Book Now</button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // On initial load
+    renderMainServices();
+  </script>
+</body>
+</html>
